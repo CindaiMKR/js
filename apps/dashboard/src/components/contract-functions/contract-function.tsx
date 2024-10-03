@@ -425,7 +425,7 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
                   <TabPanel p="0">
                     <Input
                       placeholder="🔎 Search"
-                      className="sticky top-0 mb-3 rounded-none border-r-none border-l-none focus-visible:ring-0"
+                      className="sticky top-0 z-10 mb-3 rounded-none border-r-none border-l-none focus-visible:ring-0"
                       onChange={handleKeywordSearch}
                     />
                     {writeFunctions.map((e) => functionSection(e))}
@@ -435,7 +435,7 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
                   <TabPanel p="0">
                     <Input
                       placeholder="🔎 Search"
-                      className="sticky top-0 mb-3 rounded-none border-r-none border-l-none focus-visible:ring-0"
+                      className="sticky top-0 z-10 mb-3 rounded-none border-r-none border-l-none focus-visible:ring-0"
                       onChange={handleKeywordSearch}
                     />
                     {viewFunctions.map((e) => functionSection(e))}
