@@ -34,6 +34,7 @@ import * as ERC1155Ext from "thirdweb/extensions/erc1155";
 import { useReadContract } from "thirdweb/react";
 import { toFunctionSelector } from "thirdweb/utils";
 import { Badge, Button, Card, Heading, Text } from "tw-components";
+import { useDebouncedCallback } from "use-debounce";
 import { useContractFunctionSelectors } from "../../contract-ui/hooks/useContractFunctionSelectors";
 import {
   COMMANDS,
@@ -333,9 +334,12 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
       : 0;
 
   const [keywordSearch, setKeywordSearch] = useState<string>("");
-  const handleKeywordSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setKeywordSearch(e.target.value);
-  };
+  const handleKeywordSearch = useDebouncedCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setKeywordSearch(e.target.value);
+    },
+    300,
+  );
 
   const functionSection = (e: ExtensionFunctions) => {
     const filteredFunctions = keywordSearch
