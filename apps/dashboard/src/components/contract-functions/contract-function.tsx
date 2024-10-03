@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { useDashboardRouter } from "@/lib/DashboardRouter";
 import { cn } from "@/lib/utils";
 import {
@@ -331,43 +332,55 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
       ? 1
       : 0;
 
-  const functionSection = (e: ExtensionFunctions) => (
-    <Flex key={e.extension} flexDir="column" mb={6}>
-      {e.extension ? (
-        <>
-          <Flex alignItems="center" alignContent="center" gap={2}>
-            <Image
-              src="/assets/dashboard/extension-check.svg"
-              alt="Extension detected"
-              objectFit="contain"
-              mb="2px"
-            />
-            <Heading as="label" size="label.md">
-              {e.extension}
-            </Heading>
-          </Flex>
-          <Divider my={2} />
-        </>
-      ) : (
-        <>
-          <Flex alignItems="center" alignContent="center" gap={2}>
-            <Heading as="label" size="label.md">
-              Other Functions
-            </Heading>
-          </Flex>
-          <Divider my={2} />
-        </>
-      )}
-      {e.functions.map((fn) => (
-        <FunctionsOrEventsListItem
-          key={`${fn.name}_${fn.type}_${fn.inputs.length}`}
-          fn={fn}
-          selectedFunction={selectedFunction}
-          setSelectedFunction={setSelectedFunction}
-        />
-      ))}
-    </Flex>
-  );
+  const [keywordSearch, setKeywordSearch] = useState<string>("");
+  const handleKeywordSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeywordSearch(e.target.value);
+  };
+
+  const functionSection = (e: ExtensionFunctions) => {
+    const filteredFunctions = keywordSearch
+      ? e.functions.filter((o) =>
+          o.name.toLowerCase().includes(keywordSearch.toLowerCase()),
+        )
+      : e.functions;
+    return (
+      <Flex key={e.extension} flexDir="column" mb={6} m={4}>
+        {e.extension ? (
+          <>
+            <Flex alignItems="center" alignContent="center" gap={2}>
+              <Image
+                src="/assets/dashboard/extension-check.svg"
+                alt="Extension detected"
+                objectFit="contain"
+                mb="2px"
+              />
+              <Heading as="label" size="label.md">
+                {e.extension}
+              </Heading>
+            </Flex>
+            <Divider my={2} />
+          </>
+        ) : (
+          <>
+            <Flex alignItems="center" alignContent="center" gap={2}>
+              <Heading as="label" size="label.md">
+                Other Functions
+              </Heading>
+            </Flex>
+            <Divider my={2} />
+          </>
+        )}
+        {filteredFunctions.map((fn) => (
+          <FunctionsOrEventsListItem
+            key={`${fn.name}_${fn.type}_${fn.inputs.length}`}
+            fn={fn}
+            selectedFunction={selectedFunction}
+            setSelectedFunction={setSelectedFunction}
+          />
+        ))}
+      </Flex>
+    );
+  };
 
   return (
     <SimpleGrid height="100%" columns={12} gap={5}>
@@ -389,6 +402,7 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
               position="relative"
               display="flex"
               flexDir="column"
+              onChange={() => setKeywordSearch("")}
             >
               <TabList as={Flex}>
                 {writeFunctions.length > 0 && (
@@ -408,12 +422,22 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
               </TabList>
               <TabPanels h="auto" overflow="auto">
                 {writeFunctions.length > 0 && (
-                  <TabPanel>
+                  <TabPanel p="0">
+                    <Input
+                      placeholder="🔎 Search"
+                      className="sticky top-0 mb-3 rounded-none border-r-none border-l-none focus-visible:ring-0"
+                      onChange={handleKeywordSearch}
+                    />
                     {writeFunctions.map((e) => functionSection(e))}
                   </TabPanel>
                 )}
                 {viewFunctions.length > 0 && (
-                  <TabPanel>
+                  <TabPanel p="0">
+                    <Input
+                      placeholder="🔎 Search"
+                      className="sticky top-0 mb-3 rounded-none border-r-none border-l-none focus-visible:ring-0"
+                      onChange={handleKeywordSearch}
+                    />
                     {viewFunctions.map((e) => functionSection(e))}
                   </TabPanel>
                 )}
