@@ -25,6 +25,7 @@ import {
 } from "@chakra-ui/react";
 import type { AbiEvent, AbiFunction } from "abitype";
 import { camelToTitle } from "contract-ui/components/solidity-inputs/helpers";
+import { SearchIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { type Dispatch, type SetStateAction, useMemo, useState } from "react";
 import type { ThirdwebContract } from "thirdweb";
@@ -427,21 +428,31 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
               <TabPanels h="auto" overflow="auto">
                 {writeFunctions.length > 0 && (
                   <TabPanel p="0">
-                    <Input
-                      placeholder="🔎 Search"
-                      className="sticky top-0 z-10 mb-3 rounded-none border-r-none border-l-none focus-visible:ring-0"
-                      onChange={handleKeywordSearch}
-                    />
+                    <div className="sticky top-0 z-10 mb-3">
+                      <div className="relative w-full">
+                        <SearchIcon className="-translate-y-1/2 absolute top-[50%] left-3 size-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search"
+                          className="rounded-none border-r-none border-l-none py-2 pl-9 focus-visible:ring-0"
+                          onChange={handleKeywordSearch}
+                        />
+                      </div>
+                    </div>
                     {writeFunctions.map((e) => functionSection(e))}
                   </TabPanel>
                 )}
                 {viewFunctions.length > 0 && (
                   <TabPanel p="0">
-                    <Input
-                      placeholder="🔎 Search"
-                      className="sticky top-0 z-10 mb-3 rounded-none border-r-none border-l-none focus-visible:ring-0"
-                      onChange={handleKeywordSearch}
-                    />
+                    <div className="sticky top-0 z-10 mb-3">
+                      <div className="relative w-full">
+                        <SearchIcon className="-translate-y-1/2 absolute top-[50%] left-3 size-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search"
+                          className="rounded-none border-r-none border-l-none py-2 pl-9 focus-visible:ring-0"
+                          onChange={handleKeywordSearch}
+                        />
+                      </div>
+                    </div>
                     {viewFunctions.map((e) => functionSection(e))}
                   </TabPanel>
                 )}
