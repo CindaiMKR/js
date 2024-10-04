@@ -27,7 +27,13 @@ import type { AbiEvent, AbiFunction } from "abitype";
 import { camelToTitle } from "contract-ui/components/solidity-inputs/helpers";
 import { SearchIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { type Dispatch, type SetStateAction, useMemo, useState } from "react";
+import {
+  type ChangeEvent,
+  type Dispatch,
+  type SetStateAction,
+  useMemo,
+  useState,
+} from "react";
 import type { ThirdwebContract } from "thirdweb";
 import * as ERC20Ext from "thirdweb/extensions/erc20";
 import * as ERC721Ext from "thirdweb/extensions/erc721";
@@ -35,7 +41,7 @@ import * as ERC1155Ext from "thirdweb/extensions/erc1155";
 import { useReadContract } from "thirdweb/react";
 import { toFunctionSelector } from "thirdweb/utils";
 import { Badge, Button, Card, Heading, Text } from "tw-components";
-import { useDebouncedCallback } from "use-debounce";
+import { type DebouncedState, useDebouncedCallback } from "use-debounce";
 import { useContractFunctionSelectors } from "../../contract-ui/hooks/useContractFunctionSelectors";
 import {
   COMMANDS,
@@ -256,6 +262,23 @@ type ExtensionFunctions = {
   functions: AbiFunction[];
 };
 
+const FunctionInputSearch = ({
+  searchFn,
+}: {
+  searchFn: DebouncedState<(e: ChangeEvent<HTMLInputElement>) => void>;
+}) => (
+  <div className="sticky top-0 z-10 mb-3">
+    <div className="relative w-full">
+      <SearchIcon className="-translate-y-1/2 absolute top-[50%] left-3 size-4 text-muted-foreground" />
+      <Input
+        placeholder="Search"
+        className="rounded-none border-r-none border-l-none py-2 pl-9 focus-visible:ring-0"
+        onChange={searchFn}
+      />
+    </div>
+  </div>
+);
+
 export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
   fnsOrEvents,
   contract,
@@ -349,7 +372,7 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
         )
       : e.functions;
     return (
-      <Flex key={e.extension} flexDir="column" mb={6} m={4}>
+      <Flex key={e.extension} flexDir="column" mb={6} p={4}>
         {e.extension ? (
           <>
             <Flex alignItems="center" alignContent="center" gap={2}>
@@ -428,31 +451,13 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
               <TabPanels h="auto" overflow="auto">
                 {writeFunctions.length > 0 && (
                   <TabPanel p="0">
-                    <div className="sticky top-0 z-10 mb-3">
-                      <div className="relative w-full">
-                        <SearchIcon className="-translate-y-1/2 absolute top-[50%] left-3 size-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search"
-                          className="rounded-none border-r-none border-l-none py-2 pl-9 focus-visible:ring-0"
-                          onChange={handleKeywordSearch}
-                        />
-                      </div>
-                    </div>
+                    <FunctionInputSearch searchFn={handleKeywordSearch} />
                     {writeFunctions.map((e) => functionSection(e))}
                   </TabPanel>
                 )}
                 {viewFunctions.length > 0 && (
                   <TabPanel p="0">
-                    <div className="sticky top-0 z-10 mb-3">
-                      <div className="relative w-full">
-                        <SearchIcon className="-translate-y-1/2 absolute top-[50%] left-3 size-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search"
-                          className="rounded-none border-r-none border-l-none py-2 pl-9 focus-visible:ring-0"
-                          onChange={handleKeywordSearch}
-                        />
-                      </div>
-                    </div>
+                    <FunctionInputSearch searchFn={handleKeywordSearch} />
                     {viewFunctions.map((e) => functionSection(e))}
                   </TabPanel>
                 )}
