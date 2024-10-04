@@ -27,13 +27,7 @@ import type { AbiEvent, AbiFunction } from "abitype";
 import { camelToTitle } from "contract-ui/components/solidity-inputs/helpers";
 import { SearchIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import {
-  type ChangeEvent,
-  type Dispatch,
-  type SetStateAction,
-  useMemo,
-  useState,
-} from "react";
+import { type Dispatch, type SetStateAction, useMemo, useState } from "react";
 import type { ThirdwebContract } from "thirdweb";
 import * as ERC20Ext from "thirdweb/extensions/erc20";
 import * as ERC721Ext from "thirdweb/extensions/erc721";
@@ -41,7 +35,7 @@ import * as ERC1155Ext from "thirdweb/extensions/erc1155";
 import { useReadContract } from "thirdweb/react";
 import { toFunctionSelector } from "thirdweb/utils";
 import { Badge, Button, Card, Heading, Text } from "tw-components";
-import { type DebouncedState, useDebouncedCallback } from "use-debounce";
+import { useDebouncedCallback } from "use-debounce";
 import { useContractFunctionSelectors } from "../../contract-ui/hooks/useContractFunctionSelectors";
 import {
   COMMANDS,
@@ -265,19 +259,27 @@ type ExtensionFunctions = {
 const FunctionInputSearch = ({
   searchFn,
 }: {
-  searchFn: DebouncedState<(e: ChangeEvent<HTMLInputElement>) => void>;
-}) => (
-  <div className="sticky top-0 z-10 mb-3">
-    <div className="relative w-full">
-      <SearchIcon className="-translate-y-1/2 absolute top-[50%] left-3 size-4 text-muted-foreground" />
-      <Input
-        placeholder="Search"
-        className="rounded-none border-r-none border-l-none py-2 pl-9 focus-visible:ring-0"
-        onChange={searchFn}
-      />
+  searchFn: Dispatch<SetStateAction<string>>;
+}) => {
+  const handleKeywordSearch = useDebouncedCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      searchFn(e.target.value);
+    },
+    300,
+  );
+  return (
+    <div className="sticky top-0 z-[1]">
+      <div className="relative w-full">
+        <SearchIcon className="-translate-y-1/2 absolute top-[50%] left-3 size-4 text-muted-foreground" />
+        <Input
+          placeholder="Search"
+          className="rounded-none border-t-0 border-r-0 border-l-0 py-2 pl-9 focus-visible:ring-0"
+          onChange={handleKeywordSearch}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
   fnsOrEvents,
@@ -358,12 +360,6 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
       : 0;
 
   const [keywordSearch, setKeywordSearch] = useState<string>("");
-  const handleKeywordSearch = useDebouncedCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setKeywordSearch(e.target.value);
-    },
-    300,
-  );
 
   const functionSection = (e: ExtensionFunctions) => {
     const filteredFunctions = keywordSearch
@@ -451,13 +447,13 @@ export const ContractFunctionsPanel: React.FC<ContractFunctionsPanelProps> = ({
               <TabPanels h="auto" overflow="auto">
                 {writeFunctions.length > 0 && (
                   <TabPanel p="0">
-                    <FunctionInputSearch searchFn={handleKeywordSearch} />
+                    <FunctionInputSearch searchFn={setKeywordSearch} />
                     {writeFunctions.map((e) => functionSection(e))}
                   </TabPanel>
                 )}
                 {viewFunctions.length > 0 && (
                   <TabPanel p="0">
-                    <FunctionInputSearch searchFn={handleKeywordSearch} />
+                    <FunctionInputSearch searchFn={setKeywordSearch} />
                     {viewFunctions.map((e) => functionSection(e))}
                   </TabPanel>
                 )}
