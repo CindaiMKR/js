@@ -16,6 +16,7 @@ import { SolidityInput } from "contract-ui/components/solidity-inputs";
 import { camelToTitle } from "contract-ui/components/solidity-inputs/helpers";
 import { replaceIpfsUrl } from "lib/sdk";
 import { InfoIcon, PlayIcon } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useId, useMemo, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -422,19 +423,28 @@ export const InteractiveAbiFunction: React.FC<InteractiveAbiFunctionProps> = ({
                 language="json"
                 code={formattedResponseData}
               />
-              {typeof formattedResponseData === "string" &&
-                formattedResponseData.startsWith("ipfs://") && (
-                  <Text size="label.sm">
-                    <TrackedLink
-                      href={replaceIpfsUrl(formattedResponseData)}
-                      isExternal
-                      category="contract-explorer"
-                      label="open-in-gateway"
-                    >
-                      Open in gateway
-                    </TrackedLink>
-                  </Text>
-                )}
+              {/* If the result is an IPFS URI, show a handy link so that users can open it in a new tab */}
+              {formattedResponseData.startsWith("ipfs://") && (
+                <Text size="label.sm">
+                  <TrackedLink
+                    href={replaceIpfsUrl(formattedResponseData)}
+                    isExternal
+                    category="contract-explorer"
+                    label="open-in-gateway"
+                  >
+                    Open in gateway
+                  </TrackedLink>
+                </Text>
+              )}
+              {/* Same with the logic above but this time it's applied to traditional urls */}
+              {(formattedResponseData.startsWith("https://") ||
+                formattedResponseData.startsWith("http://")) && (
+                <Text size="label.sm">
+                  <Link href={formattedResponseData} target="_blank">
+                    Open link
+                  </Link>
+                </Text>
+              )}
             </>
           ) : null}
         </Flex>
